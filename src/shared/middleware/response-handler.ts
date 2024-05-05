@@ -45,7 +45,7 @@ const responseHandler = async (
     );
     if (commonMapping[payload.type] === commonMapping["JSON"]) {
       res.status(errorObj.status).json({
-        error:  errorObj.message || "Internal Server Error",
+        error: errorObj.message || "Internal Server Error",
       });
     }else{
     }

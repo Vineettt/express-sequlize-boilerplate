@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import HTTPMethod from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
+import { iQueryParams } from "../../shared/interfaces/iQueryParams";
 
 const responseClass = require("@/shared/classes/responseClass");
+const executeQuery = require("@/shared/common/execute-query");
+const queryParams = require("@/shared/classes/queryParams");
 const { hashCompare } = require("@/shared/common/hashing");
 const { generateJwt } = require("@/shared/common/jwt");
 
@@ -21,12 +24,23 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
       const { email, password } = req.body;
+      let role_id;
       const user = await getUserByEmailAndPassword(email, password);
       if (user.roles.length > 0) {
         user.dataValues.role = user.roles[0].role;
+        role_id = user.dataValues.role_id;
         delete user.dataValues.roles;
         delete user.dataValues.role_id;
       }
+      let qPClass: iQueryParams = new queryParams();
+      qPClass.dbName = "AUTH";
+      qPClass.qyKey = "USER_PERMISSIONS";
+      qPClass.options_type = "SELECT";
+      qPClass.replacements = {
+        role_id
+      };
+      let permissions = await executeQuery(qPClass);
+      user.dataValues.permission = permissions;
       if (user.status == 0) {
         const access_token = await generateJwt(
           {
@@ -119,3 +133,4 @@ const getUserByEmailAndPassword = async function (
 };
 
 module.exports = login;
+

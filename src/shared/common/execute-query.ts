@@ -10,10 +10,15 @@ const executeQuery = (iQParams: iQueryParams)=>{
     try {
         console.log(iQParams)
         const conn = db[DBs[iQParams?.dbName]];
-        return conn.query(queryMapping[iQParams?.qyKey], {replacements: iQParams.replacements, type: QueryTypes.SELECT});
+        return conn.query(queryMapping[iQParams?.qyKey], {replacements: iQParams.replacements, type: qTList[iQParams.options_type]});
     } catch (error) {
         logger.error(`Error execute ${error}`)
     }
+}
+
+const qTList : any = {
+    SELECT: QueryTypes.SELECT,
+    UPDATE: QueryTypes.UPDATE,
 }
 
 module.exports = executeQuery;

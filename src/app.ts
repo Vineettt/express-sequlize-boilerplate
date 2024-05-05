@@ -9,6 +9,7 @@ const db = require("@/models/index");
 const logger = require("@/shared/common/logger");
 const syncTemplatesFolder = require("@/shared/email/sync-templates-folder");
 const loadRouter = require("./routes/index.route");
+const cors = require('cors');
 
 for (const key in db) {
   db[key]
@@ -22,6 +23,8 @@ for (const key in db) {
 }
 
 syncTemplatesFolder();
+
+app.use(cors());
 
 app.use(express.json());
 

@@ -11,7 +11,6 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
     }
     email: string | undefined;
     id: string | undefined;
-    role_id: string | undefined;
     status: number | undefined;
     reset_status: number | undefined;
     token: string | undefined;
@@ -76,15 +75,6 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
         defaultValue: 0,
       },
       token: DataTypes.STRING,
-      role_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: "Please enter a role",
-          },
-        },
-      },
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
       deleted_at: DataTypes.DATE,
@@ -110,7 +100,7 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
       return (user.password = await hashString(user.password));
     }
   });
-
+  
   users.updateRow = async function (updateQuery: any, condition: any) {
     try {
       updateQuery["updated_at"] = sequelize.fn("NOW");

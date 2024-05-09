@@ -7,6 +7,8 @@ const generateRandomString = require("@/shared/common/generate-random-string");
 const sendMail = require("@/shared/email/send-email");
 const db = require("../../models");
 const User = db.users;
+const Role = db.roles;
+const UseRoleMapping = db.user_role_mappings;
 
 const user = async (req: Request, res: Response, next: NextFunction) => {
   let responseObject:iResponse = new responseClass();
@@ -14,15 +16,23 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.resType = "TRY_BLOCK";
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
-      const { email, password, first_name, last_name, role } = req.body;
+      const { email, password, first_name, last_name } = req.body;
       const user = {
         email,
         password,
         first_name,
-        last_name,
-        role_id: role,
+        last_name
       };
       const response = await User.create(user);
+      const role_user = await Role.findOne({where: {role: 'user'}})
+
+      const ur_mapping = {
+        user_fk_id: response.id,
+        role_fk_id: role_user.id,
+      } 
+
+      await UseRoleMapping.create(ur_mapping);
+
       let activationToken = await generateRandomString(64, true, true);
       await User.updateRow(
         { token: activationToken },

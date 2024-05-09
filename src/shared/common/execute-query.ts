@@ -8,7 +8,6 @@ const db = require("@/models");
 
 const executeQuery = (iQParams: iQueryParams)=>{
     try {
-        console.log(iQParams)
         const conn = db[DBs[iQParams?.dbName]];
         return conn.query(queryMapping[iQParams?.qyKey], {replacements: iQParams.replacements, type: qTList[iQParams.options_type]});
     } catch (error) {

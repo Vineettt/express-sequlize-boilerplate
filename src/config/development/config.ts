@@ -18,5 +18,18 @@ module.exports = {
         timestamps: false
       }
     },
+    Pbac: {
+      username: dbVariables.dbPbacUsername,
+      password: dbVariables.dbPbacPassword,
+      database: dbVariables.dbPbacName,
+      host: dbVariables.dbPbacHost,
+      port: dbVariables.dbPbacPort,
+      dialect: dbVariables.dbPbacDialect,
+      logging: (msg: any) => logger.info(msg),
+      define: {
+        freezeTableName: true,
+        timestamps: false
+      }
+    },
   },
 };

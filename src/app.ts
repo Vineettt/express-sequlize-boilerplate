@@ -10,12 +10,14 @@ const logger = require("@/shared/common/logger");
 const syncTemplatesFolder = require("@/shared/email/sync-templates-folder");
 const loadRouter = require("./routes/index.route");
 const cors = require('cors');
+const Role = db.roles;
 
 for (const key in db) {
   db[key]
     .sync({ async: true })
     .then(() => {
       logger.info("Connection established successfully.");
+      Role.updateRolesTable();
     })
     .catch((error: any) => {
       logger.error(`Connection error: ${error}`);

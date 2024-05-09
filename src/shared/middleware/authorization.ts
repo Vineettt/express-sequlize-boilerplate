@@ -29,7 +29,7 @@ const authorization = async (
     await verifyJwt(token, JWT_SECRET)
       .then(async (decoded: any) => {
         let qPClass: iQueryParams = new queryParams();
-        qPClass.dbName = "AUTH";
+        qPClass.dbName = "PBAC";
         qPClass.qyKey = "ROLE_MAPPING_USER_ID";
         qPClass.options_type = "SELECT";
         qPClass.replacements = {

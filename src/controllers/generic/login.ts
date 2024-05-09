@@ -10,7 +10,7 @@ const { hashCompare } = require("@/shared/common/hashing");
 const { generateJwt } = require("@/shared/common/jwt");
 
 const db = require("@/models");
-const RoleRouteMapping = db["role-route-mappings"];
+const RoleRouteMapping = db.role_route_mappings;
 const User = db.users;
 const Role = db.roles;
 
@@ -24,23 +24,27 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
       const { email, password } = req.body;
-      let role_id;
       const user = await getUserByEmailAndPassword(email, password);
-      if (user.roles.length > 0) {
-        user.dataValues.role = user.roles[0].role;
-        role_id = user.dataValues.role_id;
-        delete user.dataValues.roles;
-        delete user.dataValues.role_id;
-      }
-      let qPClass: iQueryParams = new queryParams();
-      qPClass.dbName = "AUTH";
-      qPClass.qyKey = "USER_PERMISSIONS";
-      qPClass.options_type = "SELECT";
-      qPClass.replacements = {
-        role_id
+      let qPClassR: iQueryParams = new queryParams();
+      qPClassR.dbName = "PBAC";
+      qPClassR.qyKey = "USER_ROLES";
+      qPClassR.options_type = "SELECT";
+      qPClassR.replacements = {
+        user_fk_id: user.id
       };
-      let permissions = await executeQuery(qPClass);
-      user.dataValues.permission = permissions;
+      let roles = await executeQuery(qPClassR);
+      user.dataValues.roles = roles.map((obj: { role: any; }) => obj.role);
+
+      let qPClassP: iQueryParams = new queryParams();
+      qPClassP.dbName = "PBAC";
+      qPClassP.qyKey = "USER_PERMISSIONS";
+      qPClassP.options_type = "SELECT";
+      qPClassP.replacements = {
+        user_fk_id: user.id
+      };
+      let permissions = await executeQuery(qPClassP);
+      user.dataValues.permissions = permissions;
+
       if (user.status == 0) {
         const access_token = await generateJwt(
           {
@@ -77,30 +81,8 @@ const getUserByEmailAndPassword = async function (
   password: string
 ) {
   try {
-    User.hasMany(Role, { foreignKey: "id", sourceKey: "role_id" });
-    User.hasMany(RoleRouteMapping, {
-      foreignKey: "role_fk_id",
-      sourceKey: "role_id",
-    });
-
     const user = await User.findOne({
       where: { email: email },
-      include: [
-        {
-          model: Role,
-          as: "roles",
-          attributes: {
-            exclude: ["id"],
-          },
-        },
-        {
-          model: Role,
-          as: "roles",
-          attributes: {
-            exclude: ["id"],
-          },
-        },
-      ],
       attributes: {
         exclude: [
           "role",

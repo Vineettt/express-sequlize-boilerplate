@@ -14,7 +14,7 @@ const {
 const customErrorClass = require("@/shared/classes/customErrorClass");
 const responseClass = require("@/shared/classes/responseClass");
 const db = require("@/models");
-const RRMapping = db["role-route-mappings"];
+const RRMapping = db.role_route_mappings;
 const Role = db["roles"];
 const Routes = db["routes"];
 

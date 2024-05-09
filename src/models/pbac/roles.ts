@@ -1,9 +1,12 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
+const logger = require("@/shared/common/logger");
 
 type MyDataTypes = typeof DataTypes;
 
 module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
-  class roles extends Model {}
+  class roles extends Model {
+    static updateRolesTable: () => Promise<void>;
+  }
   roles.init(
     {
       id: {
@@ -17,8 +20,8 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
-          msg: 'ROLE_UNIQUE',
-          name: 'ROLE_UNIQUE'
+          msg: "ROLE_UNIQUE",
+          name: "ROLE_UNIQUE",
         },
         validate: {
           notNull: {
@@ -32,6 +35,22 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
       modelName: "roles",
     }
   );
+
+  roles.updateRolesTable = async function () {
+    roles
+      .bulkCreate(
+        [
+          {
+            id: "7d0c9dbd-1923-47ac-a1ee-e4039f379180",
+            role: "user",
+          },
+        ],
+        {
+          ignoreDuplicates: true,
+        }
+      )
+      .then(() => logger.info("Data have been saved"));
+  };
 
   return roles;
 };

@@ -3,8 +3,8 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 type MyDataTypes = typeof DataTypes;
 
 module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
-  class roleRouteMapping extends Model {}
-  roleRouteMapping.init(
+  class userRoleeMapping extends Model {}
+  userRoleeMapping.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -13,14 +13,14 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
         primaryKey: true,
         unique: true,
       },
+      user_fk_id: DataTypes.UUID,
       role_fk_id: DataTypes.UUID,
-      route_fk_id: DataTypes.UUID,
     },
     {
       sequelize,
-      modelName: "role-route-mappings",
+      modelName: "user_role_mappings",
     }
   );
 
-  return roleRouteMapping;
+  return userRoleeMapping;
 };

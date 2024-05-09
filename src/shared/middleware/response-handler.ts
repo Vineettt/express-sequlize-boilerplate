@@ -45,7 +45,7 @@ const responseHandler = async (
     );
     if (commonMapping[payload.type] === commonMapping["JSON"]) {
       res.status(errorObj.status).json({
-        error: errorObj.message || "Internal Server Error",
+        errors: errorObj.message || "Internal Server Error",
       });
     }else{
     }
@@ -53,7 +53,6 @@ const responseHandler = async (
 };
 
 const formatError = (err: any, status: number = 500, lang:string) => {
-  console.log(err.message)
   let errors: any = {};
 
   if(err?.message.includes(commonMapping["UNDEFINED"])){

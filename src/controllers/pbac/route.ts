@@ -80,22 +80,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       responseObject.messageKey = "SUCCESSFULLY_UPDATED";
       next(responseObject);
     }
-    if (req.method === HTTPMethod.GET) {
-      const { limit, offset } = req.body;
-      let routes = await Routes.findAll({
-        limit,
-        offset,
-        attributes: {
-          include: [[fn("COALESCE", col("handler"), ""), "handler"]],
-          exclude: ["type"],
-        },
-      });
-      responseObject.payload = {
-        payload: routes,
-      };
-      responseObject.messageKey = "SUCCESSFULLY_FETCHED";
-      next(responseObject);
-    }
   } catch (error) {
     responseObject.resType = "CATCH_BLOCK";
     responseObject.type = "JSON";

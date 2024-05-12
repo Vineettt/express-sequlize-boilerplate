@@ -41,6 +41,9 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
       responseObject.messageKey = "SUCCESSFULLY_REGISTERED";
       next(responseObject);
     }
+    if (req.method === HTTPMethod.GET) {
+
+    }
   } catch (error) {
     responseObject.resType = "CATCH_BLOCK";
     responseObject.type = "JSON";

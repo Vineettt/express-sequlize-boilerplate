@@ -11,7 +11,7 @@ const authentication = async (
     status: (arg0: number) => {
       (): any;
       new (): any;
-      json: { (arg0: { error: any }): any; new (): any };
+      json: { (arg0: { errors: any }): any; new (): any };
     };
   },
   next: () => void
@@ -22,12 +22,12 @@ const authentication = async (
     if (!token) {
       return res
         .status(StatusCode?.ClientErrorForbidden)
-        .json({ error: { message: prompts[lang]["ACCESS_DENIED_AUTH"] }});
+        .json({ errors: { message: prompts[lang]["ACCESS_DENIED_AUTH"] }});
     }
     if (!token) {
       return res
         .status(StatusCode?.ClientErrorForbidden)
-        .json({ error: {message: prompts[lang]["ACCESS_DENIED_TOKEN"] }});
+        .json({ errors: {message: prompts[lang]["ACCESS_DENIED_TOKEN"] }});
     } else {
       try {
         const decoded = await verifyJwt(token, JWT_SECRET);
@@ -37,22 +37,22 @@ const authentication = async (
         if (err.name === "TokenExpiredError") {
           return res
             .status(StatusCode?.ClientErrorUnauthorized)
-            .json({error: { message: prompts[lang]["SESSION_TIME_OUT"]} });
+            .json({errors: { message: prompts[lang]["SESSION_TIME_OUT"]} });
         } else if (err.name === "JsonWebTokenError") {
           return res
             .status(StatusCode?.ClientErrorUnauthorized)
-            .json({error: { message: prompts[lang]["INVALID_TOKEN_LOGIN"]} });
+            .json({errors: { message: prompts[lang]["INVALID_TOKEN_LOGIN"]} });
         } else {
           return res
             .status(StatusCode?.ClientErrorBadRequest)
-            .json({error: { message: err} });
+            .json({errors: { message: err} });
         }
       }
     }
   } catch (error) {
     res
       .status(StatusCode?.ServerErrorInternal)
-      .json({error: { message: prompts[lang]["SERVER_SIDE_WRONG"] }});
+      .json({errors: { message: prompts[lang]["SERVER_SIDE_WRONG"] }});
   }
 };
 

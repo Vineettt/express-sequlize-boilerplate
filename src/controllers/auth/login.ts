@@ -10,9 +10,7 @@ const { hashCompare } = require("@/shared/common/hashing");
 const { generateJwt } = require("@/shared/common/jwt");
 
 const db = require("@/models");
-const RoleRouteMapping = db.role_route_mappings;
 const User = db.users;
-const Role = db.roles;
 
 const JWT_EXPIRES_IN = 60 * 60 * 24 * 365;
 const { JWT_SECRET } = process.env;

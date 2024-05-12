@@ -7,9 +7,10 @@ const {
   removeExtension,
   lastElement,
 } = require("@/shared/common/string-functions");
-const {onlyInLeft} = require("@/shared/common/array-functions")
+const { onlyInLeft,uniqueArrayOfObject } = require("@/shared/common/array-functions");
 
 const db = require("@/models");
+const RRMapping = db.role_route_mappings;
 const Routes = db.routes;
 
 const regex = /(?<!\w)req\.method\s*===*\s*([^\s,]+)/g;
@@ -18,6 +19,8 @@ let match;
 const initRouteListAndSync = async (dirPath: string) => {
   try {
     let rList: any = await iterateFiles(dirPath, "", []);
+
+    rList = await uniqueArrayOfObject(rList,['method', 'endpoint', 'type'])
 
     const routes = await Routes.findAll();
 
@@ -42,7 +45,15 @@ const initRouteListAndSync = async (dirPath: string) => {
 
     await Routes.destroy({
       where: {
-        id: {   
+        id: {
+          [Op.in]: deleteArrayCO,
+        },
+      },
+    });
+
+    await RRMapping.destroy({
+      where: {
+        route_fk_id: {
           [Op.in]: deleteArrayCO,
         },
       },
@@ -76,6 +87,7 @@ const iterateFiles = (dirPath: string, sub_path: string, routeList: any[]) => {
               removeExtension(file.name),
               sub_path
             );
+
             routeList = routeList.concat(tempArray);
           } catch (error) {
             logger.error(`Error reading file: ${filePath}`, error);

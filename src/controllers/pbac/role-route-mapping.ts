@@ -7,8 +7,6 @@ const {
   checkArrayExist,
   checkArrObjectMissingKeys,
   getUniqueArrayObjectKey,
-  noneExist,
-  getArrayOfObjectIndex,
   onlyInLeft,
 } = require("@/shared/common/array-functions");
 const customErrorClass = require("@/shared/classes/customErrorClass");
@@ -115,11 +113,6 @@ const roleRouteMapping = async (
       }
 
       responseObject.messageKey = "SUCCESSFULLY_UPDATED";
-      next(responseObject);
-    }
-    if (req.method === HTTPMethod.GET) {
-      responseObject.payload = {};
-      responseObject.messageKey = "SUCCESSFULLY_FETCHED";
       next(responseObject);
     }
     if (req.method === HTTPMethod.DELETE) {

@@ -32,7 +32,7 @@ const handlerChecker = async (
       return res
         .status(StatusCode?.ClientErrorNotFound)
         .json({
-          error: { message: prompts[lang]["ROLE_ROUTE_MAPPING_MISSING"] },
+          errors: { message: prompts[lang]["ROLE_ROUTE_MAPPING_MISSING"] },
         });
     } else {
       next();
@@ -41,7 +41,7 @@ const handlerChecker = async (
     logger.error(`Check Handler ${error}`);
     res
       .status(StatusCode?.ServerErrorInternal)
-      .json({ error: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
+      .json({ errors: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
   }
 };
 

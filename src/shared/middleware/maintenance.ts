@@ -10,13 +10,13 @@ const maintenance = async (req: Request, res: Response, next: NextFunction) => {
   const lang:any =req.headers['accept-language']  || "eu";
   try {
     if (MAINTENANCE_MODE === "YES") {
-      return res.status(StatusCode?.ClientErrorConflict).json({ error: { message:  prompts[lang]['SERVER_UNDER_MAINTENANCE'] }});
+      return res.status(StatusCode?.ClientErrorConflict).json({ errors: { message:  prompts[lang]['SERVER_UNDER_MAINTENANCE'] }});
     } else {
       next();
     }
   } catch (error) {
     logger.error(`Maintenance ${error}`)
-    res.status(StatusCode?.ServerErrorInternal ).json({ error: { message: prompts[lang]["SERVER_SIDE_WRONG"] }});
+    res.status(StatusCode?.ServerErrorInternal ).json({ errors: { message: prompts[lang]["SERVER_SIDE_WRONG"] }});
   }
 };
 

@@ -62,19 +62,31 @@ const onlyInLeft = (
 const noneExist = (arr1: any[], arr2: any[]) => {
   let res: any = {};
   res.status = true;
-  let tArrList = arr1.filter( function( el ) {
-    return arr2.indexOf( el ) < 0;
+  let tArrList = arr1.filter(function (el) {
+    return arr2.indexOf(el) < 0;
   });
-  if(tArrList.length > 0){
+  if (tArrList.length > 0) {
     res.status = false;
     res.messageKey = "REP_DOES_NOT_EXIST";
   }
   return res;
 };
 
-const getArrayOfObjectIndex = (arr: any[], value: any, prop: string) =>{
-  return arr.findIndex(obj => obj[prop] === value);
-}
+const getArrayOfObjectIndex = (arr: any[], value: any, prop: string) => {
+  return arr.findIndex((obj) => obj[prop] === value);
+};
+
+const uniqueArrayOfObject = (
+  arr: any[],
+  props = []
+) => [
+  ...new Map(
+    arr.map((entry: { [x: string]: any }) => [
+      props.map((k) => entry[k]).join("|"),
+      entry,
+    ])
+  ).values(),
+];
 
 module.exports = {
   checkArrayExist,
@@ -84,5 +96,6 @@ module.exports = {
   getUniqueArrayObjectKey,
   onlyInLeft,
   noneExist,
-  getArrayOfObjectIndex
+  getArrayOfObjectIndex,
+  uniqueArrayOfObject,
 };

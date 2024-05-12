@@ -18,7 +18,7 @@ const authorization = async (
     status: (arg0: number) => {
       (): any;
       new (): any;
-      json: { (arg0: { error: any }): void; new (): any };
+      json: { (arg0: { errors: any }): void; new (): any };
     };
   },
   next: any
@@ -43,18 +43,18 @@ const authorization = async (
         } else {
           res
             .status(StatusCode?.ClientErrorForbidden)
-            .json({ error: { message: prompts[lang]["NOT_AUTH"] } });
+            .json({ errors: { message: prompts[lang]["NOT_AUTH"] } });
         }
       })
       .catch((error: any) => {
         res
           .status(StatusCode?.ServerErrorInternal)
-          .json({ error: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
+          .json({ errors: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
       });
   } catch (error) {
     res
       .status(StatusCode?.ServerErrorInternal)
-      .json({ error: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
+      .json({ errors: { message: prompts[lang]["SERVER_SIDE_WRONG"] } });
   }
 };
 

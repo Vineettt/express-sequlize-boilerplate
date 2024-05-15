@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTPMethod } from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
-import { col, fn } from "sequelize";
+import { Op, col, fn } from "sequelize";
 
 const responseClass = require("@/shared/classes/responseClass");
 const db = require("@/models");
@@ -13,8 +13,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.resType = "TRY_BLOCK";
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
-      const { limit, offset } = req.body;
+      const { limit, offset } = req?.body;
+      let search = req?.body?.search || "";
       let routes = await Routes.findAll({
+        where: {
+          endpoint: {
+            [Op.like]: `%${search}%`
+          }
+        },
         limit,
         offset,
         attributes: {
@@ -22,7 +28,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           exclude: ["type"],
         },
       });
-      const { count } = await Routes.findAndCountAll();
+      const count = await Routes.count({
+        where: {
+          endpoint: {
+            [Op.like]: `%${search}%`
+          }
+        }
+      });
+      console.log("--------")
+      console.log(count)
       responseObject.payload = {
         payload: routes,
         length: count

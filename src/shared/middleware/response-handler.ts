@@ -53,6 +53,8 @@ const responseHandler = async (
 };
 
 const formatError = (err: any, status: number = 500, lang:string) => {
+  console.log(err)
+
   let errors: any = {};
 
   if(err?.message.includes(commonMapping["UNDEFINED"])){

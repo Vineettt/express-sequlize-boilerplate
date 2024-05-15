@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTPMethod } from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
+import { Op } from "sequelize";
 
 const responseClass = require("@/shared/classes/responseClass");
 const db = require("@/models");
@@ -13,11 +14,23 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
       const { limit, offset } = req.body;
+      let search = req?.body?.search || "";
       let role = await Role.findAll({
+        where: {
+          role: {
+            [Op.like]: `%${search}%`
+          }
+        },
         limit,
         offset,
       });
-      const { count } = await Role.findAndCountAll();
+      const count = await Role.count({
+        where: {
+          role: {
+            [Op.like]: `%${search}%`
+          }
+        }
+      });
       responseObject.payload = {
         payload: role,
         length: count,

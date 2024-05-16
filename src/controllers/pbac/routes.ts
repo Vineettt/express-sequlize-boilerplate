@@ -35,8 +35,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           }
         }
       });
-      console.log("--------")
-      console.log(count)
       responseObject.payload = {
         payload: routes,
         length: count

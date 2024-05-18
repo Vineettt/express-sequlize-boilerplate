@@ -17,4 +17,18 @@ const replaceStringPlaceHolder =(text: string, rSArray: any[]) =>{
   return text;
 }
 
-module.exports = { removeExtension, lastElement, replaceStringPlaceHolder };
+const stringUndefined = (text:string, valText:string)=>{
+  let res: any = {};
+  res.status = true;
+  if (text === undefined) {
+    res.status = false;
+    res.messageKey = "REP_IGNORE_KEY_UNDEFINED";
+  }
+  if (text && text !== valText) {
+    res.status = false;
+    res.messageKey = "REP_IGNORE_KEY_WRONG";
+  }
+  return res;
+}
+
+module.exports = { removeExtension, lastElement, replaceStringPlaceHolder, stringUndefined };

@@ -50,11 +50,41 @@ const responseHandler = async (
     }else{
     }
   }
+
+  if (responseTypes[payload.resType] === responseTypes["WARNING_BLOCK"]) {
+    let errorObj = await formatWarning(
+      payload.payload,
+      StatusCode[
+        statusMapping[`${req.method}_ERROR`]
+      ],
+      lang
+    );
+    if (commonMapping[payload.type] === commonMapping["JSON"]) {
+      res.status(errorObj.status).json({
+        warnings: errorObj.message || "Internal Server Error",
+      });
+    }else{
+    }
+  }
 };
 
-const formatError = (err: any, status: number = 500, lang:string) => {
-  console.log(err)
+const formatWarning = (err: any, status: number = 500, lang:string) => {
 
+  let warnings: any = {};
+  
+  if(prompts[lang][err.message]){
+    if(commonMapping[err?.func] === commonMapping["REP_STRING"]){
+      warnings['message'] = replaceStringPlaceHolder(prompts[lang][err.message], err?.stringList);
+      warnings.IGNORE_KEY = `DELETE_${err?.propKey?.toUpperCase()}`
+    }
+  }
+  return {
+    message: warnings,
+    status,
+  };
+}
+
+const formatError = (err: any, status: number = 500, lang:string) => {
   let errors: any = {};
 
   if(err?.message.includes(commonMapping["UNDEFINED"])){

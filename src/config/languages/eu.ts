@@ -46,7 +46,12 @@ const prompts: any = {
   NOT_AUTH:  "Not authorized for this action",
   SERVER_SIDE_WRONG:  "Something went wrong on server side" ,
   ROLE_ROUTE_MAPPING_MISSING: "Route-Role mapping missing.",
-  SERVER_UNDER_MAINTENANCE: "Server Under Maintenance" 
+  SERVER_UNDER_MAINTENANCE: "Server Under Maintenance",
+  REP_IGNORE_KEY_UNDEFINED: "Are you sure you want to delete %%1?",
+  REP_IGNORE_KEY_WRONG: "IGNORE_KEY value is wrong.",
+  REP_DATA_EXIST_TABLE_MAPPING: "Please delete/update mapping in %%1 to delete the current entry.<br>Count : %%2",
+  NO_RECORDS_DELETE: "Records does not exist to be deleted.",
+  SUCCESSFULLY_DELETED: "Successfully Deleted."
 };
 
 module.exports = prompts;

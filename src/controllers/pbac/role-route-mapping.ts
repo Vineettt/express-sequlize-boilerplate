@@ -44,7 +44,7 @@ const roleRouteMapping = async (
         throw new customErrorClass(
           CAOMKeys.messageKey,
           "REP_STRING",
-          ["Moutes", CAOMKeys?.missingKeys?.join(",")],
+          ["Routes", CAOMKeys?.missingKeys?.join(",")],
           "mapping"
         );
       }

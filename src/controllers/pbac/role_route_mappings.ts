@@ -56,7 +56,6 @@ const roleRouteMapping = async (
       next(responseObject);
     }
   } catch (error) {
-    console.log(error)
     responseObject.resType = "CATCH_BLOCK";
     responseObject.type = "JSON";
     responseObject.payload = error;

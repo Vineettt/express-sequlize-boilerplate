@@ -3,6 +3,7 @@ const authorization = require("@/shared/middleware/authorization");
 
 const handlerMapping: any = {
   null_handler: [],
+  "": [],
   public: [],
   restricted: [authentication, authorization],
 };

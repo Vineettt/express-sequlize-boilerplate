@@ -10,6 +10,7 @@ const {
   noneExist,
   getArrayOfObjectIndex,
 } = require("@/shared/common/array-functions");
+const { stringUndefined } = require("@/shared/common/string-functions");
 const customErrorClass = require("@/shared/classes/customErrorClass");
 const handlerMapping = require("@/shared/constants/handler-mapping");
 const responseClass = require("@/shared/classes/responseClass");
@@ -22,7 +23,19 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.resType = "TRY_BLOCK";
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.PUT) {
-      let { routes } = req.body;
+      let { routes, IGNORE_KEY } = req.body;
+      let iKExist = await stringUndefined(IGNORE_KEY, "EDIT_ROUTE");
+      if (!iKExist?.status) {
+        responseObject.resType = "WARNING_BLOCK";
+        responseObject.type = "JSON";
+        responseObject.payload = new customErrorClass(
+          iKExist.messageKey,
+          "REP_STRING",
+          ["edit", ""],
+          "EDIT_ROUTE"
+        );
+        next(responseObject);
+      }
       let cAExist = await checkArrayExist(routes);
       if (!cAExist?.status) {
         throw new customErrorClass(
@@ -43,7 +56,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       }
       const objectKeys = Object.keys(handlerMapping);
       objectKeys.splice(0, 1);
-      const handlerArr = getUniqueArrayObjectKey(routes, ["handler"]);
+      const handlerArr = await getUniqueArrayObjectKey(routes, ["handler"]);
       const checkAS = await noneExist(handlerArr, objectKeys);
       if (!checkAS?.status) {
         throw new customErrorClass(
@@ -53,7 +66,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "handler"
         );
       }
-      const uniqueArrayID = getUniqueArrayObjectKey(routes, ["id"]);
+      const uniqueArrayID = await getUniqueArrayObjectKey(routes, ["id"]);
       const criteria = {
         id: {
           [Op.in]: [uniqueArrayID],
@@ -73,7 +86,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
       let routeList = await Routes.findAll({ where: criteria });
       for (const rt of routeList) {
-        let iRoute = getArrayOfObjectIndex(routes, rt.id, "id");
+        let iRoute = await getArrayOfObjectIndex(routes, rt.id, "id");
         rt.handler = routes[iRoute]["handler"];
         rt.save();
       }

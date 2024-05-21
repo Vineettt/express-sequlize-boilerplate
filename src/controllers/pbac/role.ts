@@ -5,15 +5,16 @@ import { Op } from "sequelize";
 
 const {
   checkArrayExist,
-  checkArrObjectMissingKeys
+  checkArrObjectMissingKeys,
+  getArrayOfObjectIndex,
 } = require("@/shared/common/array-functions");
-const {stringUndefined} = require("@/shared/common/string-functions");
+const { stringUndefined } = require("@/shared/common/string-functions");
 const customErrorClass = require("@/shared/classes/customErrorClass");
 const responseClass = require("@/shared/classes/responseClass");
 const db = require("@/models");
 const Role = db.roles;
 const RRMapping = db.role_route_mappings;
-const URMapping =db.user_role_mappings;
+const URMapping = db.user_role_mappings;
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   let responseObject: iResponse = new responseClass();
@@ -38,7 +39,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       next(responseObject);
     }
     if (req.method === HTTPMethod.DELETE) {
-      let { role_ids, IGNORE_KEY } = req.body;
+      let { roles, IGNORE_KEY } = req.body;
       let iKExist = await stringUndefined(IGNORE_KEY, "DELETE_ROLE");
       if (!iKExist?.status) {
         responseObject.resType = "WARNING_BLOCK";
@@ -46,42 +47,39 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         responseObject.payload = new customErrorClass(
           iKExist.messageKey,
           "REP_STRING",
-          ["role"],
-          "role"
+          ["delete", ""],
+          "DELETE_ROLE"
         );
         next(responseObject);
       }
-      let cAExist = await checkArrayExist(role_ids);
+      let cAExist = await checkArrayExist(roles);
       if (!cAExist?.status) {
         throw new customErrorClass(
           cAExist.messageKey,
           "REP_STRING",
-          ["Role_ids"],
-          "role_ids"
+          ["Roles"],
+          "roles"
         );
       }
-      let CAOMKeys = await checkArrObjectMissingKeys(role_ids, [
-        "role_id",
-      ]);
+      let CAOMKeys = await checkArrObjectMissingKeys(roles, ["role_id"]);
       if (!CAOMKeys?.status) {
         throw new customErrorClass(
           CAOMKeys.messageKey,
           "REP_STRING",
-          ["Role_ids", CAOMKeys?.missingKeys?.join(",")],
-          "role_ids"
+          ["Roles", CAOMKeys?.missingKeys?.join(",")],
+          "roles"
         );
       }
-      let role_id_list = role_ids.map((obj: any) => obj.role_id);
-      console.log(role_id_list);
+      let role_id_list = roles.map((obj: any) => obj.role_id);
       const rRMappingCount = await RRMapping.count({
         where: {
           role_fk_id: {
-            [Op.in]: role_id_list
-          }
-        }
+            [Op.in]: role_id_list,
+          },
+        },
       });
 
-      if(rRMappingCount !== 0){
+      if (rRMappingCount !== 0) {
         throw new customErrorClass(
           "REP_DATA_EXIST_TABLE_MAPPING",
           "REP_STRING",
@@ -93,30 +91,18 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       const uRMappingCount = await URMapping.count({
         where: {
           role_fk_id: {
-            [Op.in]: role_id_list
-          }
-        }
+            [Op.in]: role_id_list,
+          },
+        },
       });
 
-      if(uRMappingCount!== 0){
+      if (uRMappingCount !== 0) {
         throw new customErrorClass(
           "REP_DATA_EXIST_TABLE_MAPPING",
           "REP_STRING",
           ["User", uRMappingCount],
           "user"
         );
-      }
-
-      const rCount = await Role.count({
-        where: {
-          id: {
-            [Op.in]: role_id_list
-          }
-        }
-      });
-
-      if(uRMappingCount!== 0){
-        throw "NO_RECORDS_DELETE"
       }
 
       await Role.destroy({
@@ -127,6 +113,68 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         },
       });
       responseObject.messageKey = "SUCCESSFULLY_DELETED";
+      next(responseObject);
+    }
+    if (req.method === HTTPMethod.PUT) {
+      let { roles, IGNORE_KEY } = req.body;
+      let iKExist = await stringUndefined(IGNORE_KEY, "EDIT_ROLE");
+      if (!iKExist?.status) {
+        responseObject.resType = "WARNING_BLOCK";
+        responseObject.type = "JSON";
+        responseObject.payload = new customErrorClass(
+          iKExist.messageKey,
+          "REP_STRING",
+          ["edit", ""],
+          "EDIT_ROLE"
+        );
+        next(responseObject);
+      }
+      let cAExist = await checkArrayExist(roles);
+      if (!cAExist?.status) {
+        throw new customErrorClass(
+          cAExist.messageKey,
+          "REP_STRING",
+          ["Roles"],
+          "roles"
+        );
+      }
+      let CAOMKeys = await checkArrObjectMissingKeys(roles, ["id", "role"]);
+      if (!CAOMKeys?.status) {
+        throw new customErrorClass(
+          CAOMKeys.messageKey,
+          "REP_STRING",
+          ["Roles", CAOMKeys?.missingKeys?.join(",")],
+          "roles"
+        );
+      }
+      let role_id_list = roles.map((obj: any) => obj.id);
+
+      const rolesList = await Role.findAll({
+        where: {
+          id: {
+            [Op.in]: role_id_list,
+          },
+        },
+      });
+
+      if (rolesList?.length === 0) {
+        throw new customErrorClass(
+          "REP_DOES_NOT_EXIST",
+          "REP_STRING",
+          ["Roles"],
+          "roles"
+        );
+      }
+
+      for (const role of rolesList) {
+        let fIndex = getArrayOfObjectIndex(roles, role.id, "id");
+        if (fIndex !== -1) {
+          role.role = roles[fIndex].role;
+          role.save();
+        }
+      }
+
+      responseObject.messageKey = "SUCCESSFULLY_UPDATED";
       next(responseObject);
     }
   } catch (error) {

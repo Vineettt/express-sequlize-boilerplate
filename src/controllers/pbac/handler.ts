@@ -16,7 +16,8 @@ const handler = async (req: Request, res: Response, next: NextFunction) => {
         let handlerList : any[] = [];
         for (const itr of objectKeys) {
             let tempObj: any = {};
-            tempObj[itr.toUpperCase()] = itr; 
+            tempObj['value'] = itr; 
+            tempObj['viewValue'] = itr.toUpperCase();
             handlerList.push(tempObj)
         }
 

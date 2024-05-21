@@ -75,7 +75,7 @@ const formatWarning = (err: any, status: number = 500, lang:string) => {
   if(prompts[lang][err.message]){
     if(commonMapping[err?.func] === commonMapping["REP_STRING"]){
       warnings['message'] = replaceStringPlaceHolder(prompts[lang][err.message], err?.stringList);
-      warnings.IGNORE_KEY = `DELETE_${err?.propKey?.toUpperCase()}`
+      warnings.IGNORE_KEY = err?.propKey?.toUpperCase();
     }
   }
   return {
@@ -87,7 +87,7 @@ const formatWarning = (err: any, status: number = 500, lang:string) => {
 const formatError = (err: any, status: number = 500, lang:string) => {
   let errors: any = {};
 
-  if(err?.message.includes(commonMapping["UNDEFINED"])){
+  if(err?.message?.includes(commonMapping["UNDEFINED"])){
     let errorArrayObject = regexList[commonMapping["DOUBLE_QUOTES"]].exec(err?.message);
     if(errorArrayObject !== null){
       let prompt_key = `${errorArrayObject[1].toUpperCase()}_${commonMapping["UNDEFINED"].toUpperCase()}`;

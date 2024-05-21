@@ -31,7 +31,7 @@ const prompts: any = {
   MAIL_SEND: "MAIL SENDED",
   SUCCESSFULLY_FETCHED: "Successfully fetched",
   SUCCESSFULLY_UPDATED: "Successfully updated",
-  DATA_DOES_NOT_EXIST: "Data dose not exist.",
+  DATA_DOES_NOT_EXIST: "Data does not exist.",
   HANDLER_UNDEFINED: "Handler is required.",
   REP_UNDEFINED: "%%1 payload is required.",
   REP_NOT_ARRAY: "%%1 should be an array.",
@@ -47,9 +47,9 @@ const prompts: any = {
   SERVER_SIDE_WRONG:  "Something went wrong on server side" ,
   ROLE_ROUTE_MAPPING_MISSING: "Route-Role mapping missing.",
   SERVER_UNDER_MAINTENANCE: "Server Under Maintenance",
-  REP_IGNORE_KEY_UNDEFINED: "Are you sure you want to delete %%1?",
+  REP_IGNORE_KEY_UNDEFINED: "Are you sure you want to %%1 %%2?",
   REP_IGNORE_KEY_WRONG: "IGNORE_KEY value is wrong.",
-  REP_DATA_EXIST_TABLE_MAPPING: "Please delete/update mapping in %%1 to delete the current entry.<br>Count : %%2",
+  REP_DATA_EXIST_TABLE_MAPPING: "Please delete/update mapping in %%1 to delete the current entry. Count : %%2",
   NO_RECORDS_DELETE: "Records does not exist to be deleted.",
   SUCCESSFULLY_DELETED: "Successfully Deleted."
 };

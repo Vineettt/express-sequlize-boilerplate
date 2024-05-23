@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTPMethod } from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
-import { Op, col, fn } from "sequelize";
+import { Op, Sequelize } from "sequelize";
+import sequelize from "sequelize/types/sequelize";
 
 const {
   checkArrayExist,
@@ -15,6 +16,7 @@ const customErrorClass = require("@/shared/classes/customErrorClass");
 const handlerMapping = require("@/shared/constants/handler-mapping");
 const responseClass = require("@/shared/classes/responseClass");
 const db = require("@/models");
+const RRMapping = db.role_route_mappings;
 const Routes = db.routes;
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,6 +24,40 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     responseObject.resType = "TRY_BLOCK";
     responseObject.type = "JSON";
+    if (req.method === HTTPMethod.POST) {
+      let { role } = req.body;
+    
+      let rRMappingList = await RRMapping.findAll({
+        where: {
+          role_fk_id: role;
+        },
+      })
+
+      const uniqueRouteIds = await getUniqueArrayObjectKey(rRMappingList, ["route_fk_id"]);
+
+      let condition: any = {};
+      if(uniqueRouteIds.length > 0){
+        condition = {
+          where: {
+            id: {
+              [Op.ne]: [uniqueRouteIds],
+            },
+          },
+        };
+      }
+
+      condition['attributes']= {
+        exclude: ["type", "handler"]
+      };
+
+      const payload = await Routes.findAll(condition);
+
+      responseObject.payload = {
+        payload
+      };
+      responseObject.messageKey = "SUCCESSFULLY_FETCHED";
+      next(responseObject);
+    }
     if (req.method === HTTPMethod.PUT) {
       let { routes, IGNORE_KEY } = req.body;
       let iKExist = await stringUndefined(IGNORE_KEY, "EDIT_ROUTE");

@@ -3,7 +3,6 @@ import { HTTPMethod } from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
 import { iQueryParams } from "../../shared/interfaces/iQueryParams";
 
-const customErrorClass = require("@/shared/classes/customErrorClass");
 const responseClass = require("@/shared/classes/responseClass");
 const executeQuery = require("@/shared/common/execute-query");
 const queryParams = require("@/shared/classes/queryParams");
@@ -25,11 +24,13 @@ const roleRouteMapping = async (
       const { limit, offset } = req.body;
 
       let role = req?.body?.role || "";
+      let search = req?.body?.search || "";
 
       const replacements =  {
         limit,
         offset, 
-        role_id : `%${role}%`
+        role_id : `%${role}%`,
+        search : `%${search}%`
       };
 
       let qPClassData: iQueryParams = new queryParams();
@@ -38,7 +39,6 @@ const roleRouteMapping = async (
       qPClassData.options_type = "SELECT";
       qPClassData.replacements = replacements
       let payload = await executeQuery(qPClassData);
-
       
       let qPClassCount: iQueryParams = new queryParams();
       qPClassCount.dbName = "PBAC";

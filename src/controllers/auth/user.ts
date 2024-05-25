@@ -1,8 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import { iResponse } from "../../shared/interfaces/iResponse";
 import { iQueryParams } from "../../shared/interfaces/iQueryParams";
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
+
+const {
+  checkArrayExist,
+  checkArrObjectMissingKeys,
+  onlyInLeft,
+} = require("@/shared/common/array-functions");
+const { stringUndefined } = require("@/shared/common/string-functions");
+const customErrorClass = require("@/shared/classes/customErrorClass");
 const { HTTPMethod } = require("http-method-enum");
 const responseClass = require("@/shared/classes/responseClass");
 const generateRandomString = require("@/shared/common/generate-random-string");
@@ -73,11 +81,80 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
       };
       let permissions = await executeQuery(qPClassP);
       delete user.dataValues.status;
+      delete user.dataValues.login_attempts;
       user.dataValues.permissions = permissions;
       responseObject.messageKey = "LOGIN_SUCCESS";
       responseObject.payload = {
         user: user,
       };
+      next(responseObject);
+    }
+    if (req.method === HTTPMethod.PUT) {
+      const { user,IGNORE_KEY } = req.body;
+      let iKExist = await stringUndefined(IGNORE_KEY, "EDIT_USER");
+      if (!iKExist?.status) {
+        responseObject.resType = "WARNING_BLOCK";
+        responseObject.type = "JSON";
+        responseObject.payload = new customErrorClass(
+          iKExist.messageKey,
+          "REP_STRING",
+          ["edit", ""],
+          "EDIT_USER"
+        );
+        next(responseObject);
+        return;
+      }
+      let cAExist = await checkArrayExist(user);
+      if (!cAExist?.status) {
+        throw new customErrorClass(
+          cAExist.messageKey,
+          "REP_STRING",
+          ["User"],
+          "user"
+        );
+      }
+      let CAOMKeys = await checkArrObjectMissingKeys(user, [
+        "first_name",
+        "last_name",
+        "status",
+        "id"
+      ]);
+      if (!CAOMKeys?.status) {
+        throw new customErrorClass(
+          CAOMKeys.messageKey,
+          "REP_STRING",
+          ["User", CAOMKeys?.missingKeys?.join(",")],
+          "user"
+        );
+      }
+
+      let user_list = user.map((obj: any) => obj.id);
+
+      const uList = await User.findAll({
+        where: {
+          id: {
+            [Op.in]: user_list,
+          },
+        },
+      });
+
+      const changeUser = await onlyInLeft(uList, user, isSimilar);
+
+      if(changeUser.length === 0){
+        throw new Error("NO_CHANGE_REQUIRED");
+      }
+
+       for (const itr of changeUser) {
+        let fIndex = await user.findIndex((el: any)=>{return el.id === itr.id })
+        if(fIndex !== -1){
+          itr.first_name = user[fIndex]?.first_name;
+          itr.last_name = user[fIndex]?.last_name;
+          itr.status = accountStatus[user[fIndex]?.status];
+          await itr.save();
+        }
+      }
+
+      responseObject.messageKey = "SUCCESSFULLY_UPDATED";
       next(responseObject);
     }
   } catch (error) {
@@ -108,5 +185,18 @@ const userDetailsByID = async function (id: string) {
     return user;
   }
 };
+
+const isSimilar = (
+  a: {
+    first_name: any;
+    last_name: any;
+    status: any;
+  },
+  b: {
+    first_name: any;
+    last_name: any;
+    status: any;
+  }
+) => a.first_name === b.first_name && a.last_name === b.last_name && a.status === accountStatus[b.status];
 
 module.exports = user;

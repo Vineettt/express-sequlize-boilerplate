@@ -70,6 +70,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "DELETE_ROLE"
         );
         next(responseObject);
+        return;
       }
       let cAExist = await checkArrayExist(roles);
       if (!cAExist?.status) {
@@ -147,6 +148,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "EDIT_ROLE"
         );
         next(responseObject);
+        return;
       }
       let cAExist = await checkArrayExist(roles);
       if (!cAExist?.status) {

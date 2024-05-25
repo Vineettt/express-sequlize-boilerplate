@@ -54,6 +54,7 @@ const activationDetails = async function (token: any, status: any) {
           "deleted_at",
           "is_deleted",
           "password",
+          "login_attempts"
         ],
       },
     });
@@ -79,7 +80,6 @@ const accountDetailsByToken = async function (token: any) {
       attributes: {
         include: [[Sequelize.literal(caseExpression["STATUS_SWITCH_CASE"]), "account_status"]],
         exclude: [
-          "company_name",
           "created_at",
           "updated_at",
           "deleted_at",
@@ -89,8 +89,7 @@ const accountDetailsByToken = async function (token: any) {
           "reset_token",
           "reset_status",
           "id",
-          "img_path",
-          "role",
+          "login_attempts"
         ],
       },
     });

@@ -53,6 +53,7 @@ const resetPassword = async function (
           "deleted_at",
           "is_deleted",
           "password",
+          "login_attempts",
         ],
       },
     });
@@ -85,7 +86,13 @@ const forgotPassword = async function (email: any) {
         email,
       },
       attributes: {
-        exclude: ["created_at", "deleted_at", "is_deleted", "password"],
+        exclude: [
+          "created_at",
+          "deleted_at",
+          "is_deleted",
+          "password",
+          "login_attempts",
+        ],
       },
     });
     if (!user) {
@@ -105,7 +112,11 @@ const forgotPassword = async function (email: any) {
           `${dateTimeObject.minutes}:${dateTimeObject.seconds}`,
         ];
         throw Error(
-          new customErrorClass("RESET_PASSWORD_ALREADY_SEND", "REP_STRING", stringList)
+          new customErrorClass(
+            "RESET_PASSWORD_ALREADY_SEND",
+            "REP_STRING",
+            stringList
+          )
         );
       }
     }

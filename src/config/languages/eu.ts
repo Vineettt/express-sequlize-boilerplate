@@ -54,6 +54,7 @@ const prompts: any = {
     "Please delete/update mapping in %%1 to delete the current entry. Count : %%2",
   NO_RECORDS_DELETE: "Records does not exist to be deleted.",
   SUCCESSFULLY_DELETED: "Successfully Deleted.",
+  NO_CHANGE_REQUIRED: "No change required."
 };
 
 module.exports = prompts;

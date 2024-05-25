@@ -129,6 +129,7 @@ const roleRouteMapping = async (
           "DELETE_ROLE_ROUTE_MAPPING"
         );
         next(responseObject);
+        return;
       }
       let cAExist = await checkArrayExist(mapping);
       if (!cAExist?.status) {

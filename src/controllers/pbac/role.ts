@@ -22,13 +22,32 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.resType = "TRY_BLOCK";
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
-      const { role } = req.body;
-      const rObject = {
-        role,
-      };
-      const response = await Role.create(rObject);
+      const { roles } = req.body;
+      let cAExist = await checkArrayExist(roles);
+      if (!cAExist?.status) {
+        throw new customErrorClass(
+          cAExist.messageKey,
+          "REP_STRING",
+          ["Roles"],
+          "roles"
+        );
+      }
+      let CAOMKeys = await checkArrObjectMissingKeys(roles, [
+        "role"
+      ]);
+      if (!CAOMKeys?.status) {
+        throw new customErrorClass(
+          CAOMKeys.messageKey,
+          "REP_STRING",
+          ["Roles", CAOMKeys?.missingKeys?.join(",")],
+          "roles"
+        );
+      }
+      await Role.bulkCreate(roles);
       responseObject.messageKey = "SUCCESSFULLY_ADDED";
       next(responseObject);
+
+
     }
     if (req.method === HTTPMethod.GET) {
       let role = await Role.findAll();

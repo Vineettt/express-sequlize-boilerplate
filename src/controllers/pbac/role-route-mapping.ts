@@ -56,7 +56,7 @@ const roleRouteMapping = async (
       const countRoute = await Routes.count({
         where: {
           id: {
-            [Op.in]: [uniqueArrayRoute],
+            [Op.in]: uniqueArrayRoute,
           },
         },
       });
@@ -64,7 +64,7 @@ const roleRouteMapping = async (
       const countRole = await Role.count({
         where: {
           id: {
-            [Op.in]: [uniqueArrayRole],
+            [Op.in]: uniqueArrayRole,
           },
         },
       });
@@ -89,7 +89,7 @@ const roleRouteMapping = async (
       const mappingArray = await RRMapping.findAll({
         where: {
           role_fk_id: {
-            [Op.in]: [uniqueArrayRole],
+            [Op.in]: uniqueArrayRole,
           },
         },
       });

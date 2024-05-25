@@ -29,7 +29,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     
       let rRMappingList = await RRMapping.findAll({
         where: {
-          role_fk_id: role;
+          role_fk_id: role
         },
       })
 
@@ -40,7 +40,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         condition = {
           where: {
             id: {
-              [Op.ne]: [uniqueRouteIds],
+              [Op.ne]: uniqueRouteIds.join(","),
             },
           },
         };
@@ -105,7 +105,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       const uniqueArrayID = await getUniqueArrayObjectKey(routes, ["id"]);
       const criteria = {
         id: {
-          [Op.in]: [uniqueArrayID],
+          [Op.in]: uniqueArrayID,
         },
       };
       const count = await Routes.count({

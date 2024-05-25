@@ -75,6 +75,10 @@ module.exports = (sequelize: Sequelize, DataTypes: MyDataTypes) => {
         defaultValue: 0,
       },
       token: DataTypes.STRING,
+      login_attempts :{ 
+        type: DataTypes.NUMBER,         
+        defaultValue: 0
+      },
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
       deleted_at: DataTypes.DATE,

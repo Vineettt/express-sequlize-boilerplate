@@ -16,13 +16,13 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
     responseObject.type = "JSON";
     if (req.method === HTTPMethod.POST) {
       const { password, repeat_password, token } = req.body;
-      const email = await User.resetPassword(password, repeat_password, token);
+      const email = await resetPassword(password, repeat_password, token);
       responseObject.messageKey = "PASSWORD_UPDATE_SUCCESSFULLY";
       next(responseObject);
     }
     if (req.method === HTTPMethod.PUT) {
       const { email } = req.body;
-      const token = await User.forgotPassword(email);
+      const token = await forgotPassword(email);
       responseObject.messageKey = "SUCCESSFULLY_REGISTERED";
       next(responseObject);
     }

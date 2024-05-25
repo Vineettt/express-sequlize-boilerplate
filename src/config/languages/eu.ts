@@ -11,13 +11,14 @@ const prompts: any = {
   ACTIVATE_ACCOUNT: "Please check your registered email to active account.",
   RESET_PASSWORD_ALREADY_SEND:
     "Reset password request email already send please check your registered email. Please wait for %%1 to generate new password reset request.",
+  REP_ACCOUNT_LOCKED: `Account Locked.  Please wait for %%1 to try again`,
   ACCOUNT_ACTIVATED: "Account Activated.",
   SUCCESS: "Success.",
   LOGIN_SUCCESS: "Successfully Login.",
   SUCCESSFULLY_ADDED: "Successfully Added.",
   PASSWORD_UPDATE_SUCCESSFULLY: "Password Successfully Updated!",
   CHECK_EMAIL_PASSWORD_RESET: "Please check your email to reset password.",
-  SUCCESSFULLY_REGISTERED : "Successfully Registered.",
+  SUCCESSFULLY_REGISTERED: "Successfully Registered.",
   ROLE_UNIQUE: "ROLE already exist.",
   ROLE_ENTER: "Please enter a role.",
   EMAIL_UNIQUE: "Email ID already exist.",
@@ -40,18 +41,19 @@ const prompts: any = {
   REP_DOES_NOT_EXIST: "%%1 value does not exist",
   REP_ALREADY_EXIST: "%%1 already exist",
   ACCESS_DENIED_AUTH: "Access denied, Authorization Header is missing!",
-  ACCESS_DENIED_TOKEN:  "Access denied, token missing!",
-  SESSION_TIME_OUT:  "Session timed out,please login again",
-  INVALID_TOKEN_LOGIN:  "Invalid token,please login again!",
-  NOT_AUTH:  "Not authorized for this action",
-  SERVER_SIDE_WRONG:  "Something went wrong on server side" ,
+  ACCESS_DENIED_TOKEN: "Access denied, token missing!",
+  SESSION_TIME_OUT: "Session timed out,please login again",
+  INVALID_TOKEN_LOGIN: "Invalid token,please login again!",
+  NOT_AUTH: "Not authorized for this action",
+  SERVER_SIDE_WRONG: "Something went wrong on server side",
   ROLE_ROUTE_MAPPING_MISSING: "Route-Role mapping missing.",
   SERVER_UNDER_MAINTENANCE: "Server Under Maintenance",
   REP_IGNORE_KEY_UNDEFINED: "Are you sure you want to %%1 %%2?",
   REP_IGNORE_KEY_WRONG: "IGNORE_KEY value is wrong.",
-  REP_DATA_EXIST_TABLE_MAPPING: "Please delete/update mapping in %%1 to delete the current entry. Count : %%2",
+  REP_DATA_EXIST_TABLE_MAPPING:
+    "Please delete/update mapping in %%1 to delete the current entry. Count : %%2",
   NO_RECORDS_DELETE: "Records does not exist to be deleted.",
-  SUCCESSFULLY_DELETED: "Successfully Deleted."
+  SUCCESSFULLY_DELETED: "Successfully Deleted.",
 };
 
 module.exports = prompts;

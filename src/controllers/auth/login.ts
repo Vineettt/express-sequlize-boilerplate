@@ -8,6 +8,9 @@ const executeQuery = require("@/shared/common/execute-query");
 const queryParams = require("@/shared/classes/queryParams");
 const { hashCompare } = require("@/shared/common/hashing");
 const { generateJwt } = require("@/shared/common/jwt");
+const accountStatus = require("@/shared/constants/account-status");
+const timeDifference = require("@/shared/common/time-difference");
+const customErrorClass = require("@/shared/classes/customErrorClass");
 
 const db = require("@/models");
 const User = db.users;
@@ -28,22 +31,22 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       qPClassR.qyKey = "USER_ROLES";
       qPClassR.options_type = "SELECT";
       qPClassR.replacements = {
-        user_fk_id: user.id
+        user_fk_id: user.id,
       };
       let roles = await executeQuery(qPClassR);
-      user.dataValues.roles = roles.map((obj: { role: any; }) => obj.role);
+      user.dataValues.roles = roles.map((obj: { role: any }) => obj.role);
 
       let qPClassP: iQueryParams = new queryParams();
       qPClassP.dbName = "PBAC";
       qPClassP.qyKey = "USER_PERMISSIONS";
       qPClassP.options_type = "SELECT";
       qPClassP.replacements = {
-        user_fk_id: user.id
+        user_fk_id: user.id,
       };
       let permissions = await executeQuery(qPClassP);
       user.dataValues.permissions = permissions;
 
-      if (user.status == 0) {
+      if (user.status === accountStatus["ACCOUNT_ACTIVATED"]) {
         const access_token = await generateJwt(
           {
             email: user.email,
@@ -54,6 +57,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           JWT_EXPIRES_IN
         );
         delete user.dataValues.status;
+        delete user.dataValues.updated_at;
         responseObject.messageKey = "LOGIN_SUCCESS";
         responseObject.payload = {
           token: access_token,
@@ -83,12 +87,10 @@ const getUserByEmailAndPassword = async function (
       where: { email: email },
       attributes: {
         exclude: [
-          "role",
           "reset_token",
           "token",
           "reset_status",
           "created_at",
-          "updated_at",
           "deleted_at",
           "is_deleted",
         ],
@@ -99,9 +101,53 @@ const getUserByEmailAndPassword = async function (
     }
     if (user) {
       const isAuthenticated = await hashCompare(password, user.password);
+      const updateDate = new Date(
+        user.updated_at.getTime() + 1 * 60000
+      ).getTime();
+      const futureDate = new Date().getTime();
+      if (
+        user.status === accountStatus["ACCOUNT_LOCKED"] &&
+        updateDate < futureDate
+      ) {
+        await User.updateRow(
+          {
+            login_attempts: 0,
+            status: accountStatus["ACCOUNT_ACTIVATED"],
+          },
+          { where: { id: user.id } }
+        );
+        user.dataValues.status = accountStatus["ACCOUNT_ACTIVATED"];
+      }
+
+      if (
+        user.status === accountStatus["ACCOUNT_LOCKED"] &&
+        updateDate > futureDate
+      ) {
+        const dateTimeObject = await timeDifference(updateDate, futureDate);
+        const stringList: any = [
+          `${dateTimeObject.minutes}:${dateTimeObject.seconds}`,
+        ];
+        throw new customErrorClass(
+          "REP_ACCOUNT_LOCKED",
+          "REP_STRING",
+          stringList,
+          "account_locked"
+        );
+      }
       if (isAuthenticated) {
         delete user.dataValues.password;
         return user;
+      }
+      if (user.status === accountStatus["ACCOUNT_ACTIVATED"]) {
+        let status_code =
+          user.login_attempts > 3 ? "ACCOUNT_LOCKED" : "ACCOUNT_ACTIVATED";
+        await User.updateRow(
+          {
+            login_attempts: user.login_attempts + 1,
+            status: accountStatus[status_code],
+          },
+          { where: { id: user.id } }
+        );
       }
       throw Error("PASSWORD_INCORRECT");
     } else {
@@ -113,4 +159,3 @@ const getUserByEmailAndPassword = async function (
 };
 
 module.exports = login;
-

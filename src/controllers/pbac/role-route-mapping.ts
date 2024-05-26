@@ -149,7 +149,9 @@ const roleRouteMapping = async (
           "roles"
         );
       }
-      let rrm_list = mapping.map((obj: any) => obj.mapping_id);
+
+      const rrm_list = getUniqueArrayObjectKey(mapping, ["mapping_id"]);
+
       const rRMappingCount = await RRMapping.count({
         where: {
           role_fk_id: {

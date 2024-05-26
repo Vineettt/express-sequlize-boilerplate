@@ -16,7 +16,6 @@ const responseHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(payload)
   const lang:any =req.headers['accept-language']  || "eu";
   if (responseTypes[payload.resType] === responseTypes["TRY_BLOCK"]) {
 

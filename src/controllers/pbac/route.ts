@@ -40,7 +40,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         condition = {
           where: {
             id: {
-              [Op.ne]: uniqueRouteIds.join(","),
+              [Op.notIn]: uniqueRouteIds
             },
           },
         };

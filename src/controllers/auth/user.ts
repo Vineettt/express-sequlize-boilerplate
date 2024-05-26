@@ -177,7 +177,8 @@ const userDetailsByID = async function (id: string) {
         "updated_at",
         "deleted_at",
         "is_deleted",
-        "password"
+        "password",
+        "login_attempts"
       ],
     },
   });

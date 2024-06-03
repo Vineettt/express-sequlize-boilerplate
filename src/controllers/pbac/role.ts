@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 const {
   checkArrayExist,
   checkArrObjectMissingKeys,
+  getUniqueArrayObjectKey,
   getArrayOfObjectIndex,
 } = require("@/shared/common/array-functions");
 const { stringUndefined } = require("@/shared/common/string-functions");
@@ -43,7 +44,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "roles"
         );
       }
-      await Role.bulkCreate(roles);
+      await Role.bulkCreate(roles, { validate: true });
       responseObject.messageKey = "SUCCESSFULLY_ADDED";
       next(responseObject);
 
@@ -90,7 +91,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "roles"
         );
       }
-      let role_id_list = roles.map((obj: any) => obj.role_id);
+      let role_id_list = await getUniqueArrayObjectKey(roles, ['role_id']);
       const rRMappingCount = await RRMapping.count({
         where: {
           role_fk_id: {
@@ -168,7 +169,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           "roles"
         );
       }
-      let role_id_list = roles.map((obj: any) => obj.id);
+      let role_id_list = getUniqueArrayObjectKey(roles, ['id']);
 
       const rolesList = await Role.findAll({
         where: {

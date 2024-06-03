@@ -3,10 +3,11 @@ import { iResponse } from "../../shared/interfaces/iResponse";
 import { iQueryParams } from "../../shared/interfaces/iQueryParams";
 import { Op, Sequelize } from "sequelize";
 
-
 const {
   checkArrayExist,
   checkArrObjectMissingKeys,
+  getUniqueArrayObjectKey,
+  getArrayOfObjectIndex,
   onlyInLeft,
 } = require("@/shared/common/array-functions");
 const { stringUndefined } = require("@/shared/common/string-functions");
@@ -18,7 +19,7 @@ const executeQuery = require("@/shared/common/execute-query");
 const queryParams = require("@/shared/classes/queryParams");
 const sendMail = require("@/shared/email/send-email");
 const accountStatus = require("@/shared/constants/account-status");
-const db = require("../../models");
+const db = require("@/models");
 const User = db.users;
 const Role = db.roles;
 const UseRoleMapping = db.user_role_mappings;
@@ -70,7 +71,7 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
         user_fk_id: user.id,
       };
       let roles = await executeQuery(qPClassR);
-      user.dataValues.roles = roles.map((obj: { role: any }) => obj.role);
+      user.dataValues.roles = await getUniqueArrayObjectKey(roles, ['role']);
 
       let qPClassP: iQueryParams = new queryParams();
       qPClassP.dbName = "PBAC";
@@ -83,7 +84,7 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
       delete user.dataValues.status;
       delete user.dataValues.login_attempts;
       user.dataValues.permissions = permissions;
-      responseObject.messageKey = "LOGIN_SUCCESS";
+      responseObject.messageKey = "SUCCESSFULLY_FETCHED";
       responseObject.payload = {
         user: user,
       };
@@ -128,7 +129,7 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
         );
       }
 
-      let user_list = user.map((obj: any) => obj.id);
+      let user_list = await getUniqueArrayObjectKey(user, ['id']);
 
       const uList = await User.findAll({
         where: {
@@ -145,7 +146,7 @@ const user = async (req: Request, res: Response, next: NextFunction) => {
       }
 
        for (const itr of changeUser) {
-        let fIndex = await user.findIndex((el: any)=>{return el.id === itr.id })
+        let fIndex = await getArrayOfObjectIndex(user, itr.id, "id" );
         if(fIndex !== -1){
           itr.first_name = user[fIndex]?.first_name;
           itr.last_name = user[fIndex]?.last_name;

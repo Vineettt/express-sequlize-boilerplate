@@ -151,7 +151,7 @@ const roleRouteMapping = async (
       const deleteAO = await onlyInLeft(uRMList, mapping, isMapping);
 
       if(insertAO.length > 0){
-        await URMapping.bulkCreate(insertAO);
+        await URMapping.bulkCreate(insertAO, { validate: true });
       }
 
       if(deleteAO.length > 0){

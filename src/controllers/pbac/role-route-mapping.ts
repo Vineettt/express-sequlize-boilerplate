@@ -103,7 +103,7 @@ const roleRouteMapping = async (
           delete el.role_id
           delete  el.route_id
         });
-        await RRMapping.bulkCreate(insertAO);
+        await RRMapping.bulkCreate(insertAO, { validate: true });
       }else{
         throw new customErrorClass(
           "REP_ALREADY_EXIST",

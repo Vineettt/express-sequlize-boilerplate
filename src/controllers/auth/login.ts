@@ -3,6 +3,9 @@ import HTTPMethod from "http-method-enum";
 import { iResponse } from "../../shared/interfaces/iResponse";
 import { iQueryParams } from "../../shared/interfaces/iQueryParams";
 
+const {
+  getUniqueArrayObjectKey,
+} = require("@/shared/common/array-functions");
 const responseClass = require("@/shared/classes/responseClass");
 const executeQuery = require("@/shared/common/execute-query");
 const queryParams = require("@/shared/classes/queryParams");
@@ -34,7 +37,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         user_fk_id: user.id,
       };
       let roles = await executeQuery(qPClassR);
-      user.dataValues.roles = roles.map((obj: { role: any }) => obj.role);
+      user.dataValues.roles = await getUniqueArrayObjectKey(roles, ['role']);
 
       let qPClassP: iQueryParams = new queryParams();
       qPClassP.dbName = "PBAC";

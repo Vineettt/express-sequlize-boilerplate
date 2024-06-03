@@ -69,7 +69,6 @@ const responseHandler = async (
 };
 
 const formatWarning = (err: any, status: number = 500, lang:string) => {
-
   let warnings: any = {};
   
   if(prompts[lang][err.message]){

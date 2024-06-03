@@ -36,7 +36,7 @@ const initRouteListAndSync = async (dirPath: string) => {
       insertDataCO.push(tObj);
     }
 
-    await Routes.bulkCreate(insertDataCO);
+    await Routes.bulkCreate(insertDataCO, { validate: true });
 
     let deleteArrayCO: any[] = [];
     for (const itr of deleteAO) {

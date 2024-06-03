@@ -88,6 +88,10 @@ const uniqueArrayOfObject = (
   ).values(),
 ];
 
+const uniqueArrayValues = (arrA: any[], arrB: any[]) =>{
+  return arrB.filter((el) => !arrA.includes(el));
+}
+
 module.exports = {
   checkArrayExist,
   checkArrObjectMissingKeys,
@@ -98,4 +102,5 @@ module.exports = {
   noneExist,
   getArrayOfObjectIndex,
   uniqueArrayOfObject,
+  uniqueArrayValues
 };

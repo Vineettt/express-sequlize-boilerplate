@@ -4,7 +4,7 @@ const Sequelize = require("sequelize");
 const basename = path.basename(__filename);
 const { removeExtension } = require("@/shared/common/string-functions");
 const env = process.env.NODE_ENV || "development";
-const logger = require("@/shared/common/logger")
+const logger = require("@/shared/common/logger");
 
 const db: any = {};
 
@@ -59,7 +59,7 @@ try {
     }
   });
 } catch (error) {
-  logger.error(error)
+  logger.error(error);
 }
 
 module.exports = db;

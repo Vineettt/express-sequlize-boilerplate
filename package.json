@@ -1,8 +1,8 @@
 {
-  "name": "express-sequlize-boilerplate",
+  "name": "express-sequelize-boilerplate",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.ts",
+  "description": "A comprehensive Node.js + TypeScript boilerplate with Express.js and Sequelize ORM, featuring multi-database support, dynamic routing, and authentication system",
+  "main": "dist/app.js",
   "scripts": {
     "build": "tsc && tsc-alias",
     "build:watch": "tsc -w",

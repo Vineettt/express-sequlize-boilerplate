@@ -1,4 +1,4 @@
-# Express Sequelize Boilerplate
+# Express Sequelize Template
 
 A comprehensive Node.js + TypeScript boilerplate with Express.js and Sequelize ORM, featuring multi-database support, dynamic routing, and authentication system.
 

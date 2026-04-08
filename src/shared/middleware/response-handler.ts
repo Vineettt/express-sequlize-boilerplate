@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { iResponse } from "../interfaces/iResponse";
 import config from "../../config/index";
-const { prompts } = config();
+const { prompts, promptArray } = config();
 
 const responseTypes = require("@/shared/constants/response-types");
 const commonMapping = require("@/shared/constants/common-mapping");
@@ -16,7 +16,7 @@ const responseHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const lang:any =req.headers['accept-language']  || "eu";
+  const lang: any = promptArray.includes(req.headers["accept-language"]) ? req.headers["accept-language"] : "eu";
   if (responseTypes[payload.resType] === responseTypes["TRY_BLOCK"]) {
 
     let status_code = payload?.statusCodeKey

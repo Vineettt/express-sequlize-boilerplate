@@ -5,7 +5,7 @@ const executeQuery = require("@/shared/common/execute-query");
 const queryParams = require("@/shared/classes/queryParams");
 const { verifyJwt } = require("@/shared/common/jwt");
 const JWT_SECRET = process.env.JWT_SECRET;
-const { prompts } = config();
+const { prompts, promptArray } = config();
 const { StatusCode } = require("status-code-enum");
 
 const authorization = async (
@@ -23,7 +23,7 @@ const authorization = async (
   },
   next: any
 ) => {
-  const lang: any = req.headers["accept-language"] || "eu";
+  const lang: any = promptArray.includes(req.headers["accept-language"]) ? req.headers["accept-language"] : "eu";
   try {
     const token = req.headers.authorization;
     await verifyJwt(token, JWT_SECRET)

@@ -2,7 +2,7 @@ import config from "../../config/index";
 
 const { verifyJwt } = require("@/shared/common/jwt");
 const JWT_SECRET = process.env.JWT_SECRET;
-const { prompts } = config();
+const { prompts, promptArray } = config();
 const { StatusCode } = require("status-code-enum");
 
 const authentication = async (
@@ -16,7 +16,7 @@ const authentication = async (
   },
   next: () => void
 ) => {
-  const lang: any = req.headers["accept-language"] || "eu";
+  const lang: any = promptArray.includes(req.headers["accept-language"]) ? req.headers["accept-language"] : "eu";
   try {
     const token = req.headers.authorization;
     if (!token) {

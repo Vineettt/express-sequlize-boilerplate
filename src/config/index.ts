@@ -9,6 +9,7 @@ export default function config() {
       dbVariables: fetchAllDbConfig(),
       prompts: prompts(),
       dbNameMapping: fetchAllDbName(),
+      promptArray: Object.keys(prompts())
     });
   }
   return cache;

@@ -20,12 +20,17 @@ const loadRouter = async (app: any) => {
         handler: any;
         type: any;
       }) => {
-        let handlerKey = config.handler || "null_handler";
-        router[config.method](
-          `${config.endpoint}`,
-          handlerMapping[handlerKey],
-          require(`${controllersDir}\\${config.type}${config.endpoint}`)
-        );
+        try {
+          let handlerKey = config.handler || "";
+          console.log("handlerKey", handlerKey, config.method, config.endpoint);
+          router[config.method](
+            `${config.endpoint}`,
+            handlerMapping[handlerKey],
+            require(`${controllersDir}\\${config.type}${config.endpoint}`)
+          );
+        } catch (error) {
+          logger.error(error);
+        }
       }
     );
     app.use("/api/", router);

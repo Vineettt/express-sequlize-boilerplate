@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import config from "../../config/index";
 
-const { prompts } = config();
+const { prompts, promptArray } = config();
 const handlerMapping = require("@/shared/constants/handler-mapping");
 const logger = require("@/shared/common/logger");
 const db = require("@/models");
@@ -13,7 +13,7 @@ const handlerChecker = async (
   res: Response,
   next: NextFunction
 ) => {
-  const lang: any = req.headers["accept-language"] || "eu";
+  const lang: any = promptArray.includes(req.headers["accept-language"]) ? req.headers["accept-language"] : "eu";
   try {
     let urlArray: any[] = req.url.split("/");
     urlArray.splice(1, 1);

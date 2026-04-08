@@ -5,7 +5,7 @@ const validateEmail = async (email:string) => {
         email: email,
         sender: email,
         validateRegex: true,
-        validateMx: true,
+        validateMx: false,
         validateTypo: false,
         validateDisposable: true,
         validateSMTP: false,

@@ -12,7 +12,7 @@ module.exports = {
       host: dbVariables.dbAuthHost,
       port: dbVariables.dbAuthPort,
       dialect: dbVariables.dbAuthDialect,
-      logging: (msg: any) => logger.info(msg),
+      logging: false,
       define: {
         freezeTableName: true,
         timestamps: false
@@ -25,7 +25,7 @@ module.exports = {
       host: dbVariables.dbPbacHost,
       port: dbVariables.dbPbacPort,
       dialect: dbVariables.dbPbacDialect,
-      logging: (msg: any) => logger.info(msg),
+      logging: false,
       define: {
         freezeTableName: true,
         timestamps: false
